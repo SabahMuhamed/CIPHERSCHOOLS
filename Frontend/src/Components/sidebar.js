@@ -30,7 +30,7 @@ export default function Sidebar({
         }
     };
 
-    // ✅ Recursively render file tree with full path tracking
+    //  Recursively render file tree with full path trackin
     const renderTree = (tree, level = 0, currentPath = "") =>
         Object.keys(tree).map((key) => {
             const node = tree[key];
@@ -86,3 +86,4 @@ export default function Sidebar({
         </aside>
     );
 }
+

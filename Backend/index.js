@@ -24,8 +24,8 @@ mongoose
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
-    .then(() => console.log("✅ MongoDB Connected"))
-    .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+    .then(() => console.log("MongoDB Connected"))
+    .catch((err) => console.error(" MongoDB Connection Error:", err));
 
 
 app.post("/register", async (req, res) => {
@@ -52,7 +52,7 @@ app.post("/register", async (req, res) => {
 
         res.status(201).json({ message: "User registered successfully", user: newUser });
     } catch (err) {
-        console.error("❌ Register Error:", err);
+        console.error(" Register Error:", err);
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -84,7 +84,7 @@ app.post("/login", async (req, res) => {
             },
         });
     } catch (err) {
-        console.error("❌ Login Error:", err);
+        console.error(" Login Error:", err);
         res.status(500).json({ message: "Login failed" });
     }
 });
@@ -111,7 +111,7 @@ app.post("/save", async (req, res) => {
 
         res.json({ message: "Files saved successfully" });
     } catch (err) {
-        console.error("❌ Save Error:", err);
+        console.error(" Save Error:", err);
         res.status(401).json({ message: "Invalid or expired token" });
     }
 });
@@ -121,9 +121,10 @@ app.get("/getFiles/:userId", async (req, res) => {
         const userFiles = await Filemodel.findOne({ ownerId: req.params.userId });
         res.json(userFiles ? userFiles.files : {});
     } catch (err) {
-        console.error("❌ Get Files Error:", err);
+        console.error(" Get Files Error:", err);
         res.status(500).json({ message: "Error loading files" });
     }
 });
 
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
+

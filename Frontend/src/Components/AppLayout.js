@@ -80,11 +80,9 @@ Simple React-based code editor with file tree & live preview.`,
 
         if (!token) {
             if (user) {
-                console.warn("⚠️ Token missing but user found — redirecting to login");
                 navigate("/login");
                 return;
             }
-            console.warn("⚠️ No token found — cannot save to DB");
             return;
         }
 
@@ -101,11 +99,6 @@ Simple React-based code editor with file tree & live preview.`,
                 }),
             });
 
-            const result = await response.json();
-            console.log("✅ Files synced with database:", result);
-        } catch (error) {
-            console.error("❌ Error syncing files:", error);
-        }
     };
 
 
@@ -114,7 +107,7 @@ Simple React-based code editor with file tree & live preview.`,
         if (Object.keys(files).length > 0) {
             const timeout = setTimeout(() => {
                 saveFiles();
-            }, 2000); // save after 2 seconds of inactivity
+            }, 2000); // save files automaticaly for every inactive 2 seconds
             return () => clearTimeout(timeout);
         }
     }, [files]);
@@ -156,16 +149,16 @@ Simple React-based code editor with file tree & live preview.`,
     const closeSidebar = () => setSidebarOpen(false);
 
     const openFile = (filename) => {
-        // Get the clicked item's type (file or folder)
+        // get the filetype
         const item = getFileContent(files, filename);
 
-        // If it's an object, it's a folder → just toggle open/close in sidebar, not editor
+        //  object=folder,then do not open in editor
         if (typeof item === "object") {
             console.log("📁 Folder clicked:", filename);
-            return; // 🚫 stop here (no tab for folders)
+            return; 
         }
 
-        // Otherwise, it's a file → open it in the editor
+        // if not object,open in editor
         setCurrentFile(filename);
         if (!openTabs.includes(filename)) {
             setOpenTabs([...openTabs, filename]);
@@ -173,7 +166,7 @@ Simple React-based code editor with file tree & live preview.`,
     };
 
 
-    // Recursive function to get file content from nested folders
+    // get filecontent from nested folders
     const getFileContent = (tree, fullPath) => {
         const pathParts = fullPath.split("/");
         let node = tree;
@@ -187,10 +180,9 @@ Simple React-based code editor with file tree & live preview.`,
         return typeof node === "string" ? node : "";
     };
 
-
-    //Add a new file
+   // for Adding a newfile
     const addItem = async () => {
-        const name = prompt("Enter file/folder name (no '.' → folder):");
+        const name = prompt("Enter file/folder name:");
         if (!name) return;
         if (files[name]) return alert(`${name} already exists!`);
 
@@ -214,19 +206,18 @@ Simple React-based code editor with file tree & live preview.`,
         const added = addToFolder(newFiles);
 
         if (!added) {
-            if (!name.includes(".")) newFiles[name] = {}; // folder
-            else newFiles[name] = "// New file"; // file
+            if (!name.includes(".")) newFiles[name] = {}; // if the name contains "." it will be folder
+            else newFiles[name] = "// New file"; 
         }
 
         setFiles(newFiles);
         setCurrentFile(name);
         if (!openTabs.includes(name)) setOpenTabs([...openTabs, name]);
 
-        // ✅ Save to DB after adding
+        // Saving to DataBase
         await saveFiles(newFiles);
     };
 
-    // Recursive delete
     const deleteRecursive = (tree, keyToDelete) => {
         const newTree = { ...tree };
         for (const key in newTree) {
@@ -259,7 +250,7 @@ Simple React-based code editor with file tree & live preview.`,
         );
         setCurrentFile(newTabs.length > 0 ? newTabs[newTabs.length - 1] : remainingFiles[0] || "");
 
-        // ✅ Sync with MongoDB
+        // saving to Database
         saveFiles(updatedFiles);
     };
 
@@ -319,3 +310,4 @@ Simple React-based code editor with file tree & live preview.`,
         </div>
     );
 }
+

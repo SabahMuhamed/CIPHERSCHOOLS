@@ -61,17 +61,17 @@ Make sure you have the following installed:
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/<your-repo-name>.git
+git clone https://github.com/SabahMuhamed/CIPHERSCHOOLS.git
 
 # Navigate into the project directory
-cd <your-repo-name>
+cd CIPHERSCHOOLS
 
 # Install frontend dependencies
-cd client
+cd Frontend
 npm install
 
 # Install backend dependencies
-cd ../server
+cd Backend
 npm install
 ```
 
@@ -79,11 +79,11 @@ npm install
 
 ```bash
 # Start backend server
-cd server
+cd Backend
 npm start
 
 # Start frontend
-cd ../client
+cd Frontend
 npm start
 ```
 
@@ -165,10 +165,9 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ## Author
 
 **Mohamed Sabah MV**
-Cybersecurity & Software Developer | React, Node.js, AWS
-📧 Email: [sabahmv0770@gmail.com](mailto:sabahmv0770@gmail.com)
-💻 GitHub: [https://github.com/SabahMuhamed](https://github.com/SabahMuhamed)
+Cybersecurity & Software Developer | React, Node.js, AWS <br>
+📧 Email: [sabahmv0770@gmail.com](mailto:sabahmv0770@gmail.com) <br>
+💻 GitHub: [https://github.com/SabahMuhamed](https://github.com/SabahMuhamed) <br>
 
 ---
 
-Would you like me to generate the **LICENSE file (MIT)** content so you can add it to your repo too? It’s just a single file and makes your project officially open-source.

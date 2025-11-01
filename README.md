@@ -1,7 +1,3 @@
-Here’s your **clean, properly formatted GitHub-compatible README.md**, rewritten using **correct Markdown syntax** so you can copy and paste it directly into your repository — it will display perfectly on GitHub.
-
----
-
 # React Code Editor
 
 ## Overview
@@ -153,14 +149,6 @@ Example:
 ![Editor Screenshot](assets/editor-screenshot.png)
 ![Login Page](assets/login-page.png)
 ```
-
----
-
-## License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
----
 
 ## Author
 

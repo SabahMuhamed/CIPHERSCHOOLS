@@ -36,12 +36,12 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                         backgroundColor: "#011627",
                     }}
                 >
-                    {/* Left Column — Code Editor */}
+                    // Code Editor
                     <div style={{ height: "100%", overflow: "hidden" }}>
                         <MonacoWrapper currentFile={currentFile} setFiles={setFiles} />
                     </div>
 
-                    {/* Right Column — Preview + Console */}
+                    // livepreveiw + console
                     <div
                         style={{
                             display: "flex",
@@ -53,7 +53,7 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                             position: "relative",
                         }}
                     >
-                        {/* Console Toggle Button */}
+                        // console button
                         <button
                             onClick={() => setShowConsole(!showConsole)}
                             style={{
@@ -76,7 +76,7 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                             {showConsole ? "Hide Console" : "Show Console"}
                         </button>
 
-                        {/* Preview */}
+                        // preveiw
                         <div
                             style={{
                                 flex: 1,
@@ -99,7 +99,7 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                             />
                         </div>
 
-                        {/* Console Section (Collapsible) */}
+                        // show and hide console
                         <div
                             style={{
                                 height: showConsole ? "200px" : "0px",
@@ -167,11 +167,11 @@ const MonacoWrapper = ({ currentFile, setFiles }) => {
                 const pathParts = currentFile.split("/").filter(Boolean); // remove empty strings
                 const fileName = pathParts.pop(); // last item is filename
 
-                // Deep clone to avoid direct mutation
+                // for avoiding any mutation
                 const newFiles = JSON.parse(JSON.stringify(prev));
                 let node = newFiles;
 
-                // Traverse down folders safely
+
                 for (const part of pathParts) {
                     if (typeof node[part] !== "object") {
                         node[part] = {}; // make sure it's an object (folder)
@@ -179,7 +179,7 @@ const MonacoWrapper = ({ currentFile, setFiles }) => {
                     node = node[part];
                 }
 
-                // ✅ Ensure we’re replacing only the correct nested file
+                // Ensure we’re replacing only the correct nested file
                 node[fileName] = newCode;
 
                 return newFiles;
@@ -207,4 +207,5 @@ const MonacoWrapper = ({ currentFile, setFiles }) => {
         />
     );
 };
+
 

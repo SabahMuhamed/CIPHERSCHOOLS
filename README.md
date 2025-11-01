@@ -133,22 +133,13 @@ React-Code-Editor/
 
 * Add syntax highlighting themes (light/dark mode).
 * Implement project sharing with public/private access links.
-* Add cloud file storage (AWS S3 or Firebase).
+* Add cloud file storage (AWS S3).
 * Support for multiple programming languages.
 * Enable real-time collaborative editing using **Socket.io**.
 
 ---
 
-## Screenshots
 
-You can add screenshots here later to showcase your project UI.
-
-Example:
-
-```markdown
-![Editor Screenshot](assets/editor-screenshot.png)
-![Login Page](assets/login-page.png)
-```
 
 ## Author
 

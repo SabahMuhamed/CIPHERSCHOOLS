@@ -24,14 +24,14 @@ export default function Login() {
 
                 localStorage.setItem("files", JSON.stringify(filesResponse.data));
             } catch (fileErr) {
-                console.warn("⚠️ Could not fetch user files:", fileErr);
+                console.warn("Could not fetch user files:", fileErr); 
                 localStorage.setItem("files", JSON.stringify({}));
             }
 
-            alert("✅ Login successful!");
+            alert(" Login successful!");
             navigate("/app");
         } catch (err) {
-            console.error("❌ Login failed:", err);
+            console.error("Login failed:", err);
             alert(err.response?.data?.message || "Login failed");
         }
     };
@@ -165,5 +165,6 @@ export default function Login() {
 
     );
 }
+
 
 

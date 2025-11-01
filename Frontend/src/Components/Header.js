@@ -13,13 +13,13 @@ export default function Header({ toggleSidebar }) {
     }, []);
     const handleAuth = () => {
         if (user) {
-            // ✅ Logout logic
+            // Logout 
             localStorage.removeItem("user");
             setUser(null);
             alert("Logged out successfully!");
             navigate("/login");
         } else {
-            // ✅ Redirect to login
+            // Redirect login
             navigate("/login");
         }
     };
@@ -39,3 +39,4 @@ export default function Header({ toggleSidebar }) {
         </header>
     );
 }
+

@@ -6,39 +6,39 @@ export default function Sidebar({
     openFile,
     addItem,
     deleteItem,
-    setCurrentFile
 }) {
     const [expandedFolders, setExpandedFolders] = useState({});
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const toggleFolder = (folderPath) => {
+    const toggleFolder = (path) => {
         setExpandedFolders((prev) => ({
             ...prev,
-            [folderPath]: !prev[folderPath],
+            [path]: !prev[path],
         }));
     };
 
-    const handleSelect = (fullPath, isFolder) => {
-        console.log("Clicked file/folder:", fullPath);
-        setSelectedItem(fullPath);
+    const handleSelect = (path, isFolder) => {
+        setSelectedItem(path)
 
         if (isFolder) {
-            toggleFolder(fullPath);
-            setCurrentFile(fullPath);
+            toggleFolder(path);
+            console.log("📁 Folder clicked:", path);
+
         } else {
-            openFile(fullPath);
+
+            console.log("File clicked:", path);
+            openFile(path);
         }
     };
 
-    //  Recursively render file tree with full path trackin
-    const renderTree = (tree, level = 0, currentPath = "") =>
+    const renderTree = (tree, level = 0, base = "") =>
         Object.keys(tree).map((key) => {
             const node = tree[key];
             const isFolder = typeof node === "object";
-            const fullPath = currentPath ? `${currentPath}/${key}` : key;
+            const fullPath = base ? `${base}/${key}` : key;
 
             return (
-                <div key={fullPath} style={{ paddingLeft: level * 20 }}>
+                <div key={fullPath} style={{ paddingLeft: level * 18 }}>
                     <div
                         className={`tree-item ${selectedItem === fullPath ? "selected" : ""}`}
                         onClick={() => handleSelect(fullPath, isFolder)}
@@ -46,7 +46,7 @@ export default function Sidebar({
                             cursor: "pointer",
                             display: "flex",
                             alignItems: "center",
-                            padding: "3px 0",
+                            padding: "4px 0",
                             userSelect: "none",
                         }}
                     >
@@ -73,17 +73,26 @@ export default function Sidebar({
                 <h3>File Explorer</h3>
                 <div className="sidebar-actions">
                     <button onClick={addItem}>＋</button>
-                    <button
-                        onClick={() => deleteItem(selectedItem)}
-                        disabled={!selectedItem}
-                    >
+                    <button onClick={() => deleteItem(selectedItem)} disabled={!selectedItem}>
                         🗑️
                     </button>
                 </div>
             </div>
 
-            <div className="file-tree">{renderTree(fileTree)}</div>
-        </aside>
-    );
-}
 
+            <div
+                className="file-tree-scroll"
+                style={{
+                    overflowY: "auto",
+                    maxHeight: "calc(100vh - 80px)",
+                    paddingRight: 6,
+                }}
+            >
+                <div className="file-tree">{renderTree(fileTree)}</div>
+            </div>
+        </aside>
+
+    );
+
+
+}

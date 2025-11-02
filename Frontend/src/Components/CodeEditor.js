@@ -1,31 +1,92 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     SandpackLayout,
     SandpackProvider,
     SandpackPreview,
     SandpackConsole,
-    useActiveCode,
-    SandpackCodeEditor,
 } from "@codesandbox/sandpack-react";
 import Editor from "@monaco-editor/react";
 
 export default function CodeEditor({ files, currentFile, setFiles }) {
-
-
-
     const [showConsole, setShowConsole] = useState(false);
 
-    if (!currentFile) return <div>Select a file to edit</div>;
+    const isFolderPath = (path) => {
+        if (!path) return false;
+        const parts = path.split("/").filter(Boolean);
+        let node = files;
+        for (const part of parts) {
+            if (!node || typeof node !== "object") return false;
+            node = node[part];
+        }
+        return typeof node === "object" && !Array.isArray(node);
+    };
+
+    const flattenFiles = (tree, parent = "") => {
+        let result = {};
+        for (const key in tree) {
+            const path = `${parent}/${key}`.replace(/\/+/g, "/");
+            if (typeof tree[key] === "object") {
+                result = { ...result, ...flattenFiles(tree[key], path) };
+            } else {
+                result[path.startsWith("/") ? path : `/${path}`] = tree[key];
+            }
+        }
+        return result;
+    };
+
+    const getFileContent = (path) => {
+        const parts = path.split("/").filter(Boolean);
+        let node = files;
+        for (const part of parts) {
+            if (!node || typeof node !== "object") return "";
+            node = node[part];
+        }
+        return typeof node === "string" ? node : "";
+    };
+
+    const handleCodeChange = (newCode) => {
+        if (!currentFile || isFolderPath(currentFile)) return;
+
+        setFiles((prev) => {
+            const newFiles = JSON.parse(JSON.stringify(prev));
+            const parts = currentFile.split("/").filter(Boolean);
+            const fileName = parts.pop();
+            let node = newFiles;
+
+            for (const p of parts) {
+                if (!node[p] || typeof node[p] !== "object") node[p] = {};
+                node = node[p];
+            }
+
+            node[fileName] = newCode;
+            return newFiles;
+        });
+    };
+
+    if (!currentFile) {
+        return (
+            <div style={{ color: "#ccc", padding: 20 }}>Select a file to edit</div>
+        );
+    }
+
+    const flattened = flattenFiles(files);
+    const content = getFileContent(currentFile);
+
+
 
     return (
         <div style={{ height: "100vh", backgroundColor: "#011627" }}>
             <SandpackProvider
-                key={currentFile}
-                files={files}
+                files={flattened}
                 template="react"
                 theme="dark"
-                options={{ activeFile: currentFile, showLineNumbers: true }}
-                customSetup={{ entry: "/index.js" }}
+                options={{
+                    activeFile:
+                        currentFile && !isFolderPath(currentFile)
+                            ? `/${currentFile}`
+                            : "/App.js",
+                    showLineNumbers: true,
+                }}
             >
                 <SandpackLayout
                     style={{
@@ -36,12 +97,30 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                         backgroundColor: "#011627",
                     }}
                 >
-                    // Code Editor
+                    {/* Left Column — Monaco Editor */}
                     <div style={{ height: "100%", overflow: "hidden" }}>
-                        <MonacoWrapper currentFile={currentFile} setFiles={setFiles} />
+                        {!isFolderPath(currentFile) ? (
+                            <Editor
+                                key={currentFile}
+                                language="javascript"
+                                theme="vs-dark"
+                                value={content}
+                                onChange={handleCodeChange}
+                                height="100%"
+                                width="100%"
+                                options={{
+                                    fontSize: 14,
+                                    automaticLayout: true,
+                                    minimap: { enabled: false },
+                                    scrollBeyondLastLine: false,
+                                    wordWrap: "on",
+                                }}
+                            />
+                        ) : null}
+
                     </div>
 
-                    // livepreveiw + console
+                    {/* Right Column — Preview + Console */}
                     <div
                         style={{
                             display: "flex",
@@ -53,7 +132,6 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                             position: "relative",
                         }}
                     >
-                        // console button
                         <button
                             onClick={() => setShowConsole(!showConsole)}
                             style={{
@@ -76,7 +154,6 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                             {showConsole ? "Hide Console" : "Show Console"}
                         </button>
 
-                        // preveiw
                         <div
                             style={{
                                 flex: 1,
@@ -99,7 +176,6 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                             />
                         </div>
 
-                        // show and hide console
                         <div
                             style={{
                                 height: showConsole ? "200px" : "0px",
@@ -120,8 +196,6 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
                                     color: "white",
                                     fontSize: "13px",
                                 }}
-
-
                             />
                         </div>
                     </div>
@@ -130,82 +204,3 @@ export default function CodeEditor({ files, currentFile, setFiles }) {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-const MonacoWrapper = ({ currentFile, setFiles }) => {
-    const { code, updateCode } = useActiveCode();
-    const [internalCode, setInternalCode] = useState(code || "");
-    const [timeoutId, setTimeoutId] = useState(null);
-
-    useEffect(() => {
-        if (!code || code.trim() === "") {
-            setInternalCode("// New file");
-            updateCode("// New file");
-        } else {
-            setInternalCode(code);
-        }
-    }, [currentFile]);
-
-    const handleChange = (newCode) => {
-        if (newCode === undefined) return;
-        setInternalCode(newCode);
-
-        if (timeoutId) clearTimeout(timeoutId);
-
-        const id = setTimeout(() => {
-            updateCode(newCode);
-
-            setFiles((prev) => {
-                if (!currentFile) return prev;
-
-                const pathParts = currentFile.split("/").filter(Boolean); // remove empty strings
-                const fileName = pathParts.pop(); // last item is filename
-
-                // for avoiding any mutation
-                const newFiles = JSON.parse(JSON.stringify(prev));
-                let node = newFiles;
-
-
-                for (const part of pathParts) {
-                    if (typeof node[part] !== "object") {
-                        node[part] = {}; // make sure it's an object (folder)
-                    }
-                    node = node[part];
-                }
-
-                // Ensure we’re replacing only the correct nested file
-                node[fileName] = newCode;
-
-                return newFiles;
-            });
-        }, 400);
-
-        setTimeoutId(id);
-    };
-
-    return (
-        <Editor
-            language="javascript"
-            theme="vs-dark"
-            value={internalCode}
-            onChange={handleChange}
-            height="100%"
-            width="100%"
-            options={{
-                fontSize: 14,
-                automaticLayout: true,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                wordWrap: "on",
-            }}
-        />
-    );
-};
-
-
